@@ -14,6 +14,47 @@ import { useDatosRetos } from '../hooks/useDatosRetos'
 import { actualizarReto } from '../services/retoService'
 import { claseEstadoReto } from '../utils/estadosReto'
 
+// Junta los eventos de todas las postulaciones (postularse/aceptar/finalizar) y los
+// ordena por fecha real, sin importar a cuál postulación pertenece cada uno
+function actividadDelReto(registros) {
+  const eventos = []
+  for (const r of registros) {
+    eventos.push({ id: `${r.id}-postulo`, fecha: r.fechaRegistro, nombre: r.usuario?.nombre, texto: 'se postuló.' })
+    if (r.fechaAceptacion) {
+      eventos.push({
+        id: `${r.id}-acepto`,
+        fecha: r.fechaAceptacion,
+        nombre: r.aceptadoPor?.nombre,
+        texto: `aceptó la postulación de ${r.usuario?.nombre}.`,
+      })
+    }
+    if (r.fechaFinalizacion) {
+      eventos.push({
+        id: `${r.id}-finalizo`,
+        fecha: r.fechaFinalizacion,
+        nombre: r.finalizadoPor?.nombre,
+        texto: `finalizó la práctica de ${r.usuario?.nombre}.`,
+      })
+    }
+  }
+  return eventos.sort((a, b) => b.fecha.localeCompare(a.fecha))
+}
+
+// Una fila de la actividad: quién hizo qué y cuándo
+function FilaActividad({ nombre, texto, fecha }) {
+  return (
+    <div className="li">
+      <Avatar nombre={nombre} tamano={28} style={{ fontSize: 11 }} />
+      <div>
+        <b>{nombre || 'Alguien'}</b> {texto}
+        <p className="muted" style={{ fontSize: 12 }}>
+          {fechaHoraCorta(fecha)}
+        </p>
+      </div>
+    </div>
+  )
+}
+
 function Dato({ icono, children }) {
   return (
     <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
@@ -25,8 +66,8 @@ function Dato({ icono, children }) {
 
 // esEstudiante: el estudiante ve el reto y se postula; CESDE y empresas lo administran
 function RetoDetallePage({ id, usuario, navegar }) {
-  const { retos, registros, cargando, recargar } = useDatosRetos()
-  const postulaciones = usePostulaciones(recargar)
+  const { retos, registros, cargando, recargar } = useDatosRetos(usuario)
+  const postulaciones = usePostulaciones(recargar, usuario)
   const [pestana, setPestana] = useState('resumen')
   const [mensaje, setMensaje] = useState({ texto: '', tipo: 'exito' })
 
@@ -148,7 +189,7 @@ function RetoDetallePage({ id, usuario, navegar }) {
           {pestana === 'resumen' && (
             <>
               <div className="sec">
-                <h2>Contexto</h2>
+                <h2>Descripción</h2>
                 <p style={{ lineHeight: 1.65, color: '#33373D' }}>{reto.descripcion}</p>
               </div>
               <div className="sec" style={{ borderTop: '1px solid #EEF1EF' }}>
@@ -191,16 +232,8 @@ function RetoDetallePage({ id, usuario, navegar }) {
           {pestana === 'actividad' && (
             <div className="sec">
               {delReto.length === 0 && <p className="muted">Sin actividad todavía.</p>}
-              {delReto.map((registro) => (
-                <div key={registro.id} className="li">
-                  <Avatar nombre={registro.usuario?.nombre} tamano={28} style={{ fontSize: 11 }} />
-                  <div>
-                    <b>{registro.usuario?.nombre}</b> se postuló.
-                    <p className="muted" style={{ fontSize: 12 }}>
-                      {fechaHoraCorta(registro.fechaRegistro)}
-                    </p>
-                  </div>
-                </div>
+              {actividadDelReto(delReto).map((evento) => (
+                <FilaActividad key={evento.id} nombre={evento.nombre} texto={evento.texto} fecha={evento.fecha} />
               ))}
             </div>
           )}

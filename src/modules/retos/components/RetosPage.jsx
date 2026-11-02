@@ -12,8 +12,8 @@ import { borrarReto } from '../services/retoService'
 import { ESTADOS_RETO, claseEstadoReto } from '../utils/estadosReto'
 
 // filtrosIniciales: { busqueda, empresaId } cuando se llega desde la búsqueda o desde una empresa
-function RetosPage({ navegar, filtrosIniciales = {} }) {
-  const { retos, empresas, categorias, registros, recargar } = useDatosRetos()
+function RetosPage({ navegar, filtrosIniciales = {}, usuario }) {
+  const { retos, empresas, categorias, registros, recargar } = useDatosRetos(usuario)
   const [estado, setEstado] = useState('Todos')
   const [categoriaId, setCategoriaId] = useState('')
   const [empresaId, setEmpresaId] = useState(filtrosIniciales.empresaId || '')

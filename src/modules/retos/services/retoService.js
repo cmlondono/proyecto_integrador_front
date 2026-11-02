@@ -35,8 +35,8 @@ async function manejarRespuesta(res) {
   return res.json()
 }
 
-// GET /reto
-export async function listarRetos() {
+// GET /reto?empresaId=   empresaId: opcional, filtra los retos de una sola empresa
+export async function listarRetos(empresaId) {
   // --- LOCALSTORAGE ---
   // const empresas = leerLista(CLAVE_EMPRESAS)
   // const categorias = leerLista(CLAVE_CATEGORIAS)
@@ -45,7 +45,7 @@ export async function listarRetos() {
   //   empresa: empresas.find((e) => e.id === r.empresa?.id) || r.empresa,
   //   categoria: categorias.find((c) => c.id === r.categoria?.id) || r.categoria,
   // }))
-  const res = await fetch(BASE)
+  const res = await fetch(empresaId ? `${BASE}?empresaId=${empresaId}` : BASE)
   return manejarRespuesta(res)
 }
 

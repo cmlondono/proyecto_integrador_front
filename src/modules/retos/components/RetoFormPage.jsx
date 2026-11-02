@@ -26,8 +26,10 @@ function Requisito({ cumplido, children }) {
   )
 }
 
-function RetoFormulario({ reto, empresaInicialId, empresas, categorias, navegar }) {
-  const inicial = reto ? aFormulario(reto) : { ...retoInicial, empresaId: empresaInicialId || '' }
+function RetoFormulario({ reto, empresaInicialId, empresas, categorias, usuario, navegar }) {
+  const esEmpresa = usuario.rol === 'EMPRESA'
+  const empresaFija = esEmpresa ? usuario.empresa?.id : null
+  const inicial = reto ? aFormulario(reto) : { ...retoInicial, empresaId: empresaFija || empresaInicialId || '' }
   const { valores, setValores, cambiar } = useFormulario(inicial)
   const [errores, setErrores] = useState({})
   const [error, setError] = useState('')
@@ -78,14 +80,18 @@ function RetoFormulario({ reto, empresaInicialId, empresas, categorias, navegar 
               error={errores.nombre}
             />
             <div className="fila-campos">
-              <Select
-                etiqueta="Empresa"
-                nombre="empresaId"
-                opciones={empresas.map((e) => ({ valor: e.id, texto: e.nombre }))}
-                value={valores.empresaId}
-                onChange={cambiar}
-                error={errores.empresaId}
-              />
+              {esEmpresa ? (
+                <Input etiqueta="Empresa" value={empresa ? empresa.nombre : ''} disabled />
+              ) : (
+                <Select
+                  etiqueta="Empresa"
+                  nombre="empresaId"
+                  opciones={empresas.map((e) => ({ valor: e.id, texto: e.nombre }))}
+                  value={valores.empresaId}
+                  onChange={cambiar}
+                  error={errores.empresaId}
+                />
+              )}
               <Input etiqueta="Persona de contacto" nombre="contacto" value={empresa ? empresa.contacto : ''} disabled />
             </div>
             <TextArea
@@ -212,8 +218,8 @@ function RetoFormulario({ reto, empresaInicialId, empresas, categorias, navegar 
 }
 
 // id: reto a editar (si no viene, se crea uno nuevo). empresaId: empresa elegida de entrada
-function RetoFormPage({ id, empresaId, navegar }) {
-  const { retos, empresas, categorias, cargando } = useDatosRetos()
+function RetoFormPage({ id, empresaId, usuario, navegar }) {
+  const { retos, empresas, categorias, cargando } = useDatosRetos(usuario)
   if (cargando) return null
 
   const reto = id ? retos.find((r) => r.id === id) : null
@@ -223,6 +229,7 @@ function RetoFormPage({ id, empresaId, navegar }) {
       empresaInicialId={empresaId}
       empresas={empresas}
       categorias={categorias}
+      usuario={usuario}
       navegar={navegar}
     />
   )

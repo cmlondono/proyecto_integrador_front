@@ -13,6 +13,9 @@ export const listarUsuarios = () => pedir('/usuario/usuarios')
 export const iniciarSesion = (correo, contrasena) =>
   pedir('/usuario/login', { method: 'POST', body: JSON.stringify({ correo, contrasena }) })
 
+// DELETE {API_URL}/usuario/{id}
+export const borrarUsuario = (id) => pedir(`/usuario/${id}`, { method: 'DELETE' })
+
 // recordar = true: la sesión queda guardada aunque se cierre el navegador (localStorage)
 // recordar = false: la sesión dura solo mientras la pestaña esté abierta (sessionStorage)
 export function guardarSesion(usuario, recordar) {

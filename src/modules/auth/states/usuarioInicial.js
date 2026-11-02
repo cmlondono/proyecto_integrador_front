@@ -7,6 +7,7 @@ export const registroInicial = {
   correo: '',
   contrasena: '',
   confirmarContrasena: '',
+  empresaId: '',
 }
 
 // Datos del login (LoginRequest en el backend). "recordar" solo se usa en el front.

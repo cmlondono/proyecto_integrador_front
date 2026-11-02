@@ -1,8 +1,9 @@
 import { useState } from 'react'
 import { cambiarEstadoRegistro, cancelarRegistro } from '../utils/accionesRegistro'
 
-// Aceptar / rechazar / finalizar postulaciones. recargar: vuelve a leer los datos de la pantalla
-export function usePostulaciones(recargar) {
+// Aceptar / rechazar / finalizar postulaciones.
+// recargar: vuelve a leer los datos de la pantalla. usuarioActual: quién gestiona (queda en la Actividad)
+export function usePostulaciones(recargar, usuarioActual) {
   const [mensaje, setMensaje] = useState({ texto: '', tipo: 'exito' })
 
   async function ejecutar(accion, textoExito) {
@@ -16,11 +17,11 @@ export function usePostulaciones(recargar) {
   }
 
   function aceptar(registro) {
-    return ejecutar(() => cambiarEstadoRegistro(registro, 'EN_PROCESO'), 'Postulación aceptada')
+    return ejecutar(() => cambiarEstadoRegistro(registro, 'EN_PROCESO', usuarioActual), 'Postulación aceptada')
   }
 
   function finalizar(registro) {
-    return ejecutar(() => cambiarEstadoRegistro(registro, 'FINALIZADO'), 'Práctica finalizada')
+    return ejecutar(() => cambiarEstadoRegistro(registro, 'FINALIZADO', usuarioActual), 'Práctica finalizada')
   }
 
   // El backend no tiene estado "rechazado": rechazar elimina la inscripción

@@ -13,12 +13,14 @@ export function postularse(usuario, reto, observacion) {
 }
 
 // Cambia solo el estado; el backend necesita el registro completo
-export function cambiarEstadoRegistro(registro, estado) {
+// gestionadoPor: cuenta admin (CESDE o Empresa) que hizo el cambio
+export function cambiarEstadoRegistro(registro, estado, gestionadoPor) {
   return actualizarRegistro(registro.id, {
     ...registro,
     estado,
     usuario: { id: registro.usuario.id },
     reto: { id: registro.reto.id },
+    gestionadoPor: { id: gestionadoPor.id },
   })
 }
 

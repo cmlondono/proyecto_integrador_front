@@ -27,6 +27,10 @@ export function validarRegistro(valores) {
 
   if (estaVacio(valores.rol)) errores.rol = 'El rol es obligatorio'
 
+  if (valores.rol === 'EMPRESA' && estaVacio(valores.empresaId)) {
+    errores.empresaId = 'Debes elegir tu empresa'
+  }
+
   return errores
 }
 

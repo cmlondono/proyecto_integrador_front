@@ -4,9 +4,9 @@ import { listarEmpresas } from '../../empresas/services/empresaService'
 import { listarCategorias } from '../../categorias/services/categoriaService'
 import { listarRegistros } from '../../registros/services/registroService'
 
-async function leerTodo() {
+async function leerTodo(empresaId) {
   const [retos, empresas, categorias, registros] = await Promise.all([
-    listarRetos(),
+    listarRetos(empresaId),
     listarEmpresas(),
     listarCategorias(),
     listarRegistros(),
@@ -15,15 +15,17 @@ async function leerTodo() {
 }
 
 // Carga juntas las listas que usan las pantallas de retos, inicio y portal
-export function useDatosRetos() {
+// usuario: si es rol EMPRESA, los retos se filtran a los de su propia empresa
+export function useDatosRetos(usuario) {
+  const empresaId = usuario?.rol === 'EMPRESA' ? usuario.empresa?.id : undefined
   const [datos, setDatos] = useState({ retos: [], empresas: [], categorias: [], registros: [], cargando: true })
 
   useEffect(() => {
-    leerTodo().then(setDatos)
-  }, [])
+    leerTodo(empresaId).then(setDatos)
+  }, [empresaId])
 
   async function recargar() {
-    setDatos(await leerTodo())
+    setDatos(await leerTodo(empresaId))
   }
 
   return { ...datos, recargar }

@@ -63,12 +63,13 @@ function App() {
       navegar={navegar}
       nombreUsuario={usuario.nombre}
       detalleUsuario={textoRol(usuario.rol)}
+      rol={usuario.rol}
       onSalir={cerrarSesion}
     >
       {pagina === 'inicio' && <InicioPage key={clave} usuario={usuario} navegar={navegar} />}
-      {pagina === 'retos' && <RetosPage key={clave} navegar={navegar} filtrosIniciales={datos} />}
+      {pagina === 'retos' && <RetosPage key={clave} navegar={navegar} filtrosIniciales={datos} usuario={usuario} />}
       {pagina === 'retoDetalle' && <RetoDetallePage key={clave} id={datos.id} usuario={usuario} navegar={navegar} />}
-      {pagina === 'retoForm' && <RetoFormPage key={clave} id={datos.id} empresaId={datos.empresaId} navegar={navegar} />}
+      {pagina === 'retoForm' && <RetoFormPage key={clave} id={datos.id} empresaId={datos.empresaId} usuario={usuario} navegar={navegar} />}
       {pagina === 'empresas' && <EmpresasPage key={clave} navegar={navegar} />}
       {pagina === 'usuarios' && <UsuariosPage key={clave} />}
       {pagina === 'categorias' && <CategoriasPage key={clave} />}
