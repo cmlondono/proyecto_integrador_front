@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { listarUsuarios, registrar } from '../../auth/services/authService'
+import { listarUsuarios, registrar, borrarUsuario } from '../../auth/services/authService'
 import { listarRegistros } from '../../registros/services/registroService'
 
 // Usuarios del sistema (sin contraseña) y sus postulaciones para contarlas
@@ -25,5 +25,15 @@ export function useUsuarios() {
     }
   }
 
-  return { usuarios, registros, mensaje, crear }
+  async function eliminar(usuario) {
+    try {
+      await borrarUsuario(usuario.id)
+      setMensaje({ texto: `Usuario ${usuario.nombre} eliminado`, tipo: 'exito' })
+      setUsuarios(await listarUsuarios())
+    } catch (error) {
+      setMensaje({ texto: error.message, tipo: 'error' })
+    }
+  }
+
+  return { usuarios, registros, mensaje, crear, eliminar }
 }

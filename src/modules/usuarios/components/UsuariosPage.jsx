@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import Avatar from '../../core/design-system/Avatar'
 import Segmento from '../../core/design-system/Segmento'
+import IconButton from '../../core/design-system/IconButton'
 import Mensaje from '../../core/components/Mensaje'
 import { ROLES, textoRol } from '../../auth/utils/roles'
 import { useUsuarios } from '../hooks/useUsuarios'
@@ -14,7 +15,7 @@ const COLORES_ROL = {
 }
 
 function UsuariosPage() {
-  const { usuarios, registros, mensaje, crear } = useUsuarios()
+  const { usuarios, registros, mensaje, crear, eliminar } = useUsuarios()
   const [rol, setRol] = useState('Todos')
 
   const pestanas = [
@@ -25,6 +26,11 @@ function UsuariosPage() {
 
   function postulaciones(usuario) {
     return registros.filter((r) => r.usuario?.id === usuario.id).length
+  }
+
+  function confirmarEliminar(usuario) {
+    if (!window.confirm(`¿Eliminar a ${usuario.nombre}?`)) return
+    eliminar(usuario)
   }
 
   return (
@@ -48,6 +54,9 @@ function UsuariosPage() {
                 <th>Usuario</th>
                 <th>Rol</th>
                 <th>Postulaciones</th>
+                <th>
+                  <span className="sr">Acciones</span>
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -70,6 +79,14 @@ function UsuariosPage() {
                     </span>
                   </td>
                   <td>{usuario.rol === 'ESTUDIANTE' ? postulaciones(usuario) : '—'}</td>
+                  <td style={{ textAlign: 'right' }}>
+                    <IconButton
+                      icono="borrar"
+                      etiqueta="Eliminar usuario"
+                      variante="no"
+                      onClick={() => confirmarEliminar(usuario)}
+                    />
+                  </td>
                 </tr>
               ))}
             </tbody>

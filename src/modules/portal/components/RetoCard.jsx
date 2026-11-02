@@ -3,10 +3,13 @@ import Avatar from '../../core/design-system/Avatar'
 import Chip from '../../core/design-system/Chip'
 import { fechaCorta } from '../../core/utils/fechas'
 import { claseEstadoReto } from '../../retos/utils/estadosReto'
+import { claseEstadoRegistro, textoEstadoRegistro } from '../../registros/utils/estadosRegistro'
 
 // Tarjeta de un reto en la grilla del portal.
 // puedePostularse: solo los estudiantes ven el botón "Postularme"
-function RetoCard({ reto, postulado, puedePostularse, onPostular, onVerDetalle }) {
+// estadoPostulacion: estado del registro si ya se postuló (solo se puede cancelar mientras está INSCRITO)
+function RetoCard({ reto, postulado, estadoPostulacion, puedePostularse, onPostular, onVerDetalle }) {
+  const puedeCancelar = postulado && estadoPostulacion === 'INSCRITO'
   return (
     <article className="card tarjeta">
       <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
@@ -30,7 +33,12 @@ function RetoCard({ reto, postulado, puedePostularse, onPostular, onVerDetalle }
         <span className="tag">Cierra {fechaCorta(reto.fechaFin)}</span>
       </div>
       <div style={{ marginTop: 'auto', display: 'flex', gap: 10 }}>
-        {puedePostularse && (
+        {puedePostularse && postulado && !puedeCancelar && (
+          <Chip clase={claseEstadoRegistro(estadoPostulacion)} style={{ flex: 1, justifyContent: 'center' }}>
+            {textoEstadoRegistro(estadoPostulacion)}
+          </Chip>
+        )}
+        {puedePostularse && (!postulado || puedeCancelar) && (
           <Button
             variante={postulado ? 'done' : 'p'}
             icono={postulado ? 'check' : undefined}

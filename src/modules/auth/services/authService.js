@@ -1,46 +1,20 @@
-import { leerLista, guardarLista, inicializarLista } from '../../core/lib/almacenamiento'
-import { generarId } from '../../core/utils/generarId'
-import { usuariosEjemplo } from '../lib/usuariosEjemplo'
+import { pedir } from '../../core/lib/api'
 
-// Las funciones son async para que se usen igual que un fetch.
-// Para conectar el backend, reemplazar el cuerpo de registrar e iniciarSesion
-// por el fetch que aparece en el comentario (API_URL está en core/lib/api.js).
-// La sesión (usuario que ingresó) se sigue guardando en el navegador.
-
-const CLAVE = 'usuarios'
 const CLAVE_SESION = 'sesion'
 
-inicializarLista(CLAVE, usuariosEjemplo)
-
-// El backend nunca devuelve la contraseña, aquí tampoco
-function sinContrasena(usuario) {
-  return { id: usuario.id, nombre: usuario.nombre, correo: usuario.correo, rol: usuario.rol }
-}
-
 // POST {API_URL}/usuario/registro   body: { nombre, correo, contrasena, rol }
-export async function registrar(usuario) {
-  const lista = leerLista(CLAVE)
-  const existe = lista.some((u) => u.correo.toLowerCase() === usuario.correo.toLowerCase())
-  if (existe) throw new Error('Ya existe un usuario con ese correo')
-
-  const nuevo = { ...usuario, id: generarId() }
-  guardarLista(CLAVE, [...lista, nuevo])
-  return sinContrasena(nuevo)
-}
+export const registrar = (usuario) =>
+  pedir('/usuario/registro', { method: 'POST', body: JSON.stringify(usuario) })
 
 // GET {API_URL}/usuario/usuarios
-export async function listarUsuarios() {
-  return leerLista(CLAVE).map(sinContrasena)
-}
+export const listarUsuarios = () => pedir('/usuario/usuarios')
 
 // POST {API_URL}/usuario/login   body: { correo, contrasena }
-export async function iniciarSesion(correo, contrasena) {
-  const usuario = leerLista(CLAVE).find(
-    (u) => u.correo.toLowerCase() === correo.toLowerCase() && u.contrasena === contrasena
-  )
-  if (!usuario) throw new Error('Correo o contraseña incorrectos')
-  return sinContrasena(usuario)
-}
+export const iniciarSesion = (correo, contrasena) =>
+  pedir('/usuario/login', { method: 'POST', body: JSON.stringify({ correo, contrasena }) })
+
+// DELETE {API_URL}/usuario/{id}
+export const borrarUsuario = (id) => pedir(`/usuario/${id}`, { method: 'DELETE' })
 
 // recordar = true: la sesión queda guardada aunque se cierre el navegador (localStorage)
 // recordar = false: la sesión dura solo mientras la pestaña esté abierta (sessionStorage)

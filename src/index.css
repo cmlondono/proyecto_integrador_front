@@ -96,17 +96,10 @@ p {
   padding: 4px 10px 18px;
 }
 
-.mark {
-  width: 36px;
-  height: 36px;
-  border-radius: 10px;
-  background: #cdf42a;
-  color: #15151b;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 800;
-  font-size: 20px;
+.logo-cesde {
+  height: 28px;
+  width: auto;
+  display: block;
   flex: none;
 }
 
@@ -498,6 +491,12 @@ p {
   background: #fff;
   color: #15151b;
   box-shadow: 0 1px 3px rgba(16, 24, 40, 0.12);
+}
+
+/* Selector de tipo de cuenta en Ingresa/Crea cuenta: mismo color que el botón principal */
+.login-form .seg button.on {
+  background: #db2771;
+  color: #fff;
 }
 
 .seg em {
@@ -1077,7 +1076,20 @@ a.row:hover {
 }
 
 .login-hero .lima {
-  color: #cdf42a;
+  color: #db2771;
+}
+
+/* Botón "Buscar" del portal: mismo rosa que el resto, sin afectar el botón lima en otras pantallas */
+.portal-hero .btn-a {
+  background: #db2771;
+  border-color: #db2771;
+  color: #fff;
+}
+
+.portal-hero .btn-a:hover {
+  background: #a3195a;
+  border-color: #a3195a;
+  color: #fff;
 }
 
 .login-marca {
@@ -1089,11 +1101,8 @@ a.row:hover {
   letter-spacing: -0.03em;
 }
 
-.login-marca .mark {
-  width: 44px;
-  height: 44px;
-  border-radius: 12px;
-  font-size: 24px;
+.login-marca .logo-cesde {
+  height: 36px;
 }
 
 .login-marca small {
@@ -1235,9 +1244,9 @@ a.row:hover {
 }
 
 .fchip.on {
-  background: #cdf42a;
-  color: #15151b;
-  border-color: #cdf42a;
+  background: #db2771;
+  color: #fff;
+  border-color: #db2771;
 }
 
 .portal-main {

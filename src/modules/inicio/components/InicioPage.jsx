@@ -18,9 +18,10 @@ const accionesRapidas = [
 ]
 
 function InicioPage({ usuario, navegar }) {
-  const datos = useDatosRetos()
-  const { mensaje, aceptar, rechazar } = usePostulaciones(datos.recargar)
+  const datos = useDatosRetos(usuario)
+  const { mensaje, aceptar, rechazar } = usePostulaciones(datos.recargar, usuario)
   const { retos, registros } = datos
+  const acciones = usuario.rol === 'EMPRESA' ? accionesRapidas.filter((a) => a.pagina === 'retoForm') : accionesRapidas
 
   const indicadores = calcularIndicadores(datos)
   const categorias = retosPorCategoria(retos, datos.categorias)
@@ -86,7 +87,7 @@ function InicioPage({ usuario, navegar }) {
       <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
         <h2>Acciones rápidas</h2>
         <div className="grid-acciones">
-          {accionesRapidas.map((accion) => (
+          {acciones.map((accion) => (
             <a key={accion.pagina} className="card qa" onClick={() => navegar(accion.pagina)}>
               <span className="kico" style={accion.principal ? { background: '#DB2771', color: '#fff' } : undefined}>
                 <Icono nombre={accion.icono} />

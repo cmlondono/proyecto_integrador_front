@@ -1,17 +1,24 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Button from '../../core/design-system/Button'
 import Input from '../../core/design-system/Input'
 import Select from '../../core/design-system/Select'
 import { useFormulario } from '../../core/hooks/useFormulario'
 import { validarRegistro } from '../../auth/utils/validarUsuario'
 import { ROLES } from '../../auth/utils/roles'
+import { listarEmpresas } from '../../empresas/services/empresaService'
 
-const usuarioInicial = { nombre: '', correo: '', contrasena: '', rol: 'ESTUDIANTE' }
+const usuarioInicial = { nombre: '', correo: '', contrasena: '', rol: 'ESTUDIANTE', empresaId: '' }
 
 // Banda oscura para registrar un usuario (POST /usuario/registro)
 function UsuarioForm({ onCrear }) {
   const { valores, cambiar, reiniciar } = useFormulario(usuarioInicial)
   const [errores, setErrores] = useState({})
+  const [empresas, setEmpresas] = useState([])
+
+  // Se usa cuando el rol elegido es Empresa, para escoger a cuál pertenece
+  useEffect(() => {
+    listarEmpresas().then(setEmpresas).catch(() => {})
+  }, [])
 
   async function enviar(evento) {
     evento.preventDefault()
@@ -19,7 +26,10 @@ function UsuarioForm({ onCrear }) {
     setErrores(erroresEncontrados)
     if (Object.keys(erroresEncontrados).length > 0) return
 
-    const creado = await onCrear(valores)
+    const { empresaId, ...datos } = valores
+    const usuario = { ...datos, ...(valores.rol === 'EMPRESA' ? { empresa: { id: empresaId } } : {}) }
+
+    const creado = await onCrear(usuario)
     if (creado) reiniciar()
   }
 
@@ -51,6 +61,17 @@ function UsuarioForm({ onCrear }) {
         style={{ flexBasis: 150 }}
       />
       <Select nombre="rol" aria-label="Rol" opciones={ROLES} value={valores.rol} onChange={cambiar} error={errores.rol} style={{ flexBasis: 140 }} />
+      {valores.rol === 'EMPRESA' && (
+        <Select
+          nombre="empresaId"
+          aria-label="Empresa"
+          opciones={empresas.map((e) => ({ valor: e.id, texto: e.nombre }))}
+          value={valores.empresaId}
+          onChange={cambiar}
+          error={errores.empresaId}
+          style={{ flexBasis: 180 }}
+        />
+      )}
       <Button type="submit" variante="a">
         Registrar
       </Button>

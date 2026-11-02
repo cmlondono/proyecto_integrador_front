@@ -61,7 +61,7 @@ function PortalPage({ usuario, navegar }) {
     <>
       <section className="portal-hero">
         <div style={{ maxWidth: 1240, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 20 }}>
-          <p style={{ color: '#CDF42A', fontWeight: 700 }}>Hola, {usuario.nombre.split(' ')[0]}</p>
+          <p style={{ color: '#DB2771', fontWeight: 700 }}>Hola, {usuario.nombre.split(' ')[0]}</p>
           <h1>Encuentra el reto donde vas a crecer</h1>
           <form style={{ display: 'flex', flexWrap: 'wrap', gap: 12, maxWidth: 760 }} onSubmit={buscar}>
             <div className="portal-buscar">
@@ -115,16 +115,20 @@ function PortalPage({ usuario, navegar }) {
           </div>
           {visibles.length === 0 && <p className="card vacio">No hay retos publicados con esos filtros.</p>}
           <div className="grid-tarjetas" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 360px), 1fr))' }}>
-            {visibles.map((reto) => (
-              <RetoCard
-                key={reto.id}
-                reto={reto}
-                postulado={Boolean(miPostulacionEn(reto))}
-                puedePostularse={esEstudiante}
-                onPostular={() => alternarPostulacion(reto)}
-                onVerDetalle={() => navegar('retoDetalle', { id: reto.id })}
-              />
-            ))}
+            {visibles.map((reto) => {
+              const registro = miPostulacionEn(reto)
+              return (
+                <RetoCard
+                  key={reto.id}
+                  reto={reto}
+                  postulado={Boolean(registro)}
+                  estadoPostulacion={registro?.estado}
+                  puedePostularse={esEstudiante}
+                  onPostular={() => alternarPostulacion(reto)}
+                  onVerDetalle={() => navegar('retoDetalle', { id: reto.id })}
+                />
+              )
+            })}
           </div>
         </section>
       </main>

@@ -1,12 +1,14 @@
 import { useState } from 'react'
 import Button from '../../core/design-system/Button'
 import Input from '../../core/design-system/Input'
+import Select from '../../core/design-system/Select'
 import { useFormulario } from '../../core/hooks/useFormulario'
 import { registroInicial } from '../states/usuarioInicial'
 import { validarRegistro } from '../utils/validarUsuario'
 
 // rol: el elegido en el selector Empresa / Estudiante / CESDE
-function RegistroForm({ rol, onRegistrar }) {
+// empresas: lista de empresas existentes (solo se usa si rol === 'EMPRESA')
+function RegistroForm({ rol, empresas = [], onRegistrar }) {
   const { valores, cambiar } = useFormulario(registroInicial)
   const [errores, setErrores] = useState({})
 
@@ -22,6 +24,7 @@ function RegistroForm({ rol, onRegistrar }) {
       correo: valores.correo,
       contrasena: valores.contrasena,
       rol,
+      ...(rol === 'EMPRESA' ? { empresa: { id: valores.empresaId } } : {}),
     })
   }
 
@@ -43,6 +46,16 @@ function RegistroForm({ rol, onRegistrar }) {
         onChange={cambiar}
         error={errores.correo}
       />
+      {rol === 'EMPRESA' && (
+        <Select
+          etiqueta="Empresa"
+          nombre="empresaId"
+          opciones={empresas.map((e) => ({ valor: e.id, texto: e.nombre }))}
+          value={valores.empresaId}
+          onChange={cambiar}
+          error={errores.empresaId}
+        />
+      )}
       <Input
         etiqueta="Contraseña"
         nombre="contrasena"

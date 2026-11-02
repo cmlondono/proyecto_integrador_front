@@ -11,9 +11,13 @@ const menuGeneral = [
   { id: 'categorias', texto: 'Categorías', icono: 'categorias' },
 ]
 
+// Solo CESDE administra empresas, usuarios y categorías; una cuenta Empresa solo ve sus propios retos
+const SOLO_CESDE = ['empresas', 'usuarios', 'categorias']
+
 // Estructura de la vista de administración: menú lateral oscuro + barra superior
-function AdminLayout({ paginaActual, navegar, nombreUsuario, detalleUsuario, onSalir, children }) {
+function AdminLayout({ paginaActual, navegar, nombreUsuario, detalleUsuario, rol, onSalir, children }) {
   const [busqueda, setBusqueda] = useState('')
+  const menu = rol === 'EMPRESA' ? menuGeneral.filter((opcion) => !SOLO_CESDE.includes(opcion.id)) : menuGeneral
 
   // La búsqueda lleva a la lista de retos filtrada
   function buscar(evento) {
@@ -29,15 +33,15 @@ function AdminLayout({ paginaActual, navegar, nombreUsuario, detalleUsuario, onS
     <div className="app">
       <aside className="side">
         <div className="brand">
-          <div className="mark">c</div>
+          <img src="/logo-cesde.svg" alt="CESDE" className="logo-cesde" />
           <div className="wm">
-            cesde<small>Retos empresariales</small>
+            <small>Retos empresariales</small>
           </div>
         </div>
 
         <div className="navlbl">General</div>
         <nav className="nav" aria-label="Principal">
-          {menuGeneral.map((opcion) => (
+          {menu.map((opcion) => (
             <button
               key={opcion.id}
               className={marcado === opcion.id ? 'on' : ''}

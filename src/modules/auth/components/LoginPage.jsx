@@ -1,8 +1,9 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Icono from '../../core/design-system/Icono'
 import Segmento from '../../core/design-system/Segmento'
 import Mensaje from '../../core/components/Mensaje'
 import { ROLES } from '../utils/roles'
+import { listarEmpresas } from '../../empresas/services/empresaService'
 import LoginForm from './LoginForm'
 import RegistroForm from './RegistroForm'
 
@@ -16,6 +17,12 @@ const beneficios = [
 function LoginPage({ error, setError, onIngresar, onRegistrar }) {
   const [vista, setVista] = useState('login')
   const [rol, setRol] = useState('EMPRESA')
+  const [empresas, setEmpresas] = useState([])
+
+  // Se usa en el registro, para que una cuenta Empresa elija a cuál empresa pertenece
+  useEffect(() => {
+    listarEmpresas().then(setEmpresas).catch(() => {})
+  }, [])
 
   function cambiarVista(nuevaVista) {
     setVista(nuevaVista)
@@ -28,10 +35,8 @@ function LoginPage({ error, setError, onIngresar, onRegistrar }) {
     <div className="login">
       <section className="login-hero">
         <div className="login-marca">
-          <div className="mark">c</div>
-          <div>
-            cesde <small>Retos empresariales</small>
-          </div>
+          <img src="/logo-cesde.svg" alt="CESDE" className="logo-cesde" />
+          <small>Retos empresariales</small>
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 20, maxWidth: 520 }}>
@@ -71,7 +76,7 @@ function LoginPage({ error, setError, onIngresar, onRegistrar }) {
           {esLogin ? (
             <LoginForm onIngresar={(datos) => onIngresar(datos, rol)} />
           ) : (
-            <RegistroForm rol={rol} onRegistrar={onRegistrar} />
+            <RegistroForm rol={rol} empresas={empresas} onRegistrar={onRegistrar} />
           )}
 
           <p style={{ textAlign: 'center', fontSize: 14 }} className="muted">
@@ -80,12 +85,6 @@ function LoginPage({ error, setError, onIngresar, onRegistrar }) {
               {esLogin ? 'Regístrate' : 'Ingresa'}
             </a>
           </p>
-
-          {esLogin && (
-            <p className="hint" style={{ textAlign: 'center' }}>
-              Pruebas (clave 123456): admin@cesde.edu.co · empresa@tecnoandina.com · estudiante@est.cesde.edu.co
-            </p>
-          )}
         </div>
       </section>
     </div>

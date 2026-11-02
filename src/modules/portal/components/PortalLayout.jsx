@@ -14,8 +14,7 @@ function PortalLayout({ usuario, navegar, onSalir, children }) {
     <div style={{ minHeight: '100vh', background: '#F1F4F2' }}>
       <header className="portal-top">
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <div className="mark">c</div>
-          <b style={{ fontSize: 20, letterSpacing: '-0.03em' }}>cesde</b>
+          <img src="/logo-cesde.svg" alt="CESDE" className="logo-cesde" />
           <span className="muted" style={{ fontSize: 13, fontWeight: 600 }}>
             Estudiantes
           </span>
