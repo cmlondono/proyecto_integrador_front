@@ -77,6 +77,8 @@ const iconos = {
   ),
   telefono: <path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2" />,
   mensaje: <path d="M4 4h16v12H8l-4 4z" />,
+  reportes: <path d="M4 20V10M10 20V4M16 20v-7M22 20H2" />,
+  actualizar: <path d="M20 11a8 8 0 0 0-14.5-4.5L4 8M4 4v4h4M4 13a8 8 0 0 0 14.5 4.5L20 16M20 20v-4h-4" />,
   info: (
     <>
       <circle cx="12" cy="12" r="9" />
