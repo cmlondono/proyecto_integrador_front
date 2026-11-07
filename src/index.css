@@ -1309,3 +1309,57 @@ a.row:hover {
     font-size: 34px;
   }
 }
+
+/* ---------- Reportes (PNG generados con Python) ---------- */
+.reporte {
+  padding: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  font-family: inherit;
+  color: inherit;
+  cursor: zoom-in;
+}
+
+.reporte:hover {
+  border-color: #db2771;
+}
+
+.reporte img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: contain;
+  background: #f8faf9;
+  border-bottom: 1px solid #eef1ef;
+}
+
+.reporte-pie {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 14px 16px;
+}
+
+.reporte-pie span {
+  font-size: 12px;
+}
+
+.reporte-visor {
+  position: fixed;
+  inset: 24px;
+  z-index: 11;
+  background: #fff;
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.reporte-visor img {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  object-fit: contain;
+  padding: 16px;
+}

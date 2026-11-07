@@ -10,6 +10,7 @@ import RetoFormPage from './modules/retos/components/RetoFormPage'
 import EmpresasPage from './modules/empresas/components/EmpresasPage'
 import UsuariosPage from './modules/usuarios/components/UsuariosPage'
 import CategoriasPage from './modules/categorias/components/CategoriasPage'
+import ReportesPage from './modules/reportes/components/ReportesPage'
 import PortalLayout from './modules/portal/components/PortalLayout'
 import PortalPage from './modules/portal/components/PortalPage'
 
@@ -73,6 +74,7 @@ function App() {
       {pagina === 'empresas' && <EmpresasPage key={clave} navegar={navegar} />}
       {pagina === 'usuarios' && <UsuariosPage key={clave} />}
       {pagina === 'categorias' && <CategoriasPage key={clave} />}
+      {pagina === 'reportes' && usuario.rol === 'CESDE' && <ReportesPage key={clave} />}
     </AdminLayout>
   )
 }

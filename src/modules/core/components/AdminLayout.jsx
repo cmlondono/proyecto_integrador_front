@@ -9,10 +9,11 @@ const menuGeneral = [
   { id: 'empresas', texto: 'Empresas', icono: 'empresas' },
   { id: 'usuarios', texto: 'Usuarios', icono: 'usuarios' },
   { id: 'categorias', texto: 'Categorías', icono: 'categorias' },
+  { id: 'reportes', texto: 'Reportes', icono: 'reportes' },
 ]
 
-// Solo CESDE administra empresas, usuarios y categorías; una cuenta Empresa solo ve sus propios retos
-const SOLO_CESDE = ['empresas', 'usuarios', 'categorias']
+// Solo CESDE administra empresas, usuarios y categorías y ve los reportes; una cuenta Empresa solo ve sus propios retos
+const SOLO_CESDE = ['empresas', 'usuarios', 'categorias', 'reportes']
 
 // Estructura de la vista de administración: menú lateral oscuro + barra superior
 function AdminLayout({ paginaActual, navegar, nombreUsuario, detalleUsuario, rol, onSalir, children }) {
