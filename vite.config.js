@@ -7,7 +7,7 @@ import { defineConfig, loadEnv } from 'vite'
 // Sirve los PNG que genera el repo de Python (carpeta "reportes") sin copiarlos al frontend.
 //   GET /api-reportes/lista        -> [{ archivo, actualizado }]
 //   GET /api-reportes/img/<png>    -> la imagen
-// La carpeta se configura con REPORTES_DIR en .env.local (ruta relativa a este proyecto o absoluta)
+// Por defecto usa ../integrador_nt_sabados20262_3/reportes; se puede cambiar con REPORTES_DIR en .env.local
 function reportesPlugin(carpeta) {
   return {
     name: 'reportes',
@@ -47,7 +47,8 @@ function reportesPlugin(carpeta) {
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '')
-  const carpetaReportes = path.resolve(env.REPORTES_DIR || 'reportes')
+  // Por defecto: el repo de Python clonado al lado de este proyecto
+  const carpetaReportes = path.resolve(env.REPORTES_DIR || '../integrador_nt_sabados20262_3/reportes')
 
   return {
     plugins: [react(), reportesPlugin(carpetaReportes)],
