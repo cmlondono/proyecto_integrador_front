@@ -1,5 +1,6 @@
-import { useState } from 'react'
+import { Navigate, Route, Routes, useLocation, useNavigate, useParams, useSearchParams } from 'react-router'
 import AdminLayout from './modules/core/components/AdminLayout'
+import { rutaDe, paginaDe } from './modules/core/lib/rutas'
 import LoginPage from './modules/auth/components/LoginPage'
 import { useAuth } from './modules/auth/hooks/useAuth'
 import { textoRol } from './modules/auth/utils/roles'
@@ -17,19 +18,42 @@ import PortalPage from './modules/portal/components/PortalPage'
 // El estudiante solo usa el portal y el detalle de los retos
 const PAGINAS_ESTUDIANTE = ['portal', 'retoDetalle']
 
+// Estas funciones leen los datos de la URL y se los pasan a la página como props, igual que antes
+
+// /retos?busqueda=...&empresaId=...
+function RetosRuta({ usuario, navegar }) {
+  const [parametros] = useSearchParams()
+  const filtros = { busqueda: parametros.get('busqueda') || '', empresaId: parametros.get('empresaId') || '' }
+  return <RetosPage usuario={usuario} navegar={navegar} filtrosIniciales={filtros} />
+}
+
+// /retos/:id
+function RetoDetalleRuta({ usuario, navegar }) {
+  const { id } = useParams()
+  return <RetoDetallePage id={id} usuario={usuario} navegar={navegar} />
+}
+
+// /retos/nuevo?empresaId=...  y  /retos/:id/editar
+function RetoFormRuta({ usuario, navegar }) {
+  const { id } = useParams()
+  const [parametros] = useSearchParams()
+  return <RetoFormPage id={id} empresaId={parametros.get('empresaId') || undefined} usuario={usuario} navegar={navegar} />
+}
+
 function App() {
   const { usuario, error, setError, ingresar, registrarse, salir } = useAuth()
-  // Página actual y sus datos (por ejemplo el id del reto)
-  const [vista, setVista] = useState({ pagina: 'inicio', datos: {} })
+  const navigate = useNavigate()
+  const location = useLocation()
 
+  // Los componentes siguen usando navegar(pagina, datos); ahora eso cambia la URL
   function navegar(pagina, datos = {}) {
-    setVista({ pagina, datos })
+    navigate(rutaDe(pagina, datos))
     window.scrollTo(0, 0)
   }
 
   function cerrarSesion() {
     salir()
-    setVista({ pagina: 'inicio', datos: {} })
+    navigate('/inicio')
   }
 
   if (!usuario) {
@@ -37,26 +61,32 @@ function App() {
   }
 
   const esEstudiante = usuario.rol === 'ESTUDIANTE'
-  const pagina = esEstudiante && !PAGINAS_ESTUDIANTE.includes(vista.pagina) ? 'portal' : vista.pagina
-  const { datos } = vista
+  const pagina = paginaDe(location.pathname)
+  if (esEstudiante && !PAGINAS_ESTUDIANTE.includes(pagina)) {
+    return <Navigate to="/portal" replace />
+  }
+
+  // La "key" hace que cada página se cargue de nuevo al cambiar la URL
+  const clave = location.pathname + location.search
 
   // Portal (y detalle para estudiantes): barra superior blanca
   if (pagina === 'portal' || (esEstudiante && pagina === 'retoDetalle')) {
     return (
       <PortalLayout usuario={usuario} navegar={navegar} onSalir={cerrarSesion}>
-        {pagina === 'portal' ? (
-          <PortalPage usuario={usuario} navegar={navegar} />
-        ) : (
-          <div className="portal-main" style={{ gap: 20 }}>
-            <RetoDetallePage key={datos.id} id={datos.id} usuario={usuario} navegar={navegar} />
-          </div>
-        )}
+        <Routes key={clave}>
+          <Route path="/portal" element={<PortalPage usuario={usuario} navegar={navegar} />} />
+          <Route
+            path="/retos/:id"
+            element={
+              <div className="portal-main" style={{ gap: 20 }}>
+                <RetoDetalleRuta usuario={usuario} navegar={navegar} />
+              </div>
+            }
+          />
+        </Routes>
       </PortalLayout>
     )
   }
-
-  // La "key" hace que cada página se cargue de nuevo al entrar
-  const clave = pagina + JSON.stringify(datos)
 
   return (
     <AdminLayout
@@ -67,14 +97,23 @@ function App() {
       rol={usuario.rol}
       onSalir={cerrarSesion}
     >
-      {pagina === 'inicio' && <InicioPage key={clave} usuario={usuario} navegar={navegar} />}
-      {pagina === 'retos' && <RetosPage key={clave} navegar={navegar} filtrosIniciales={datos} usuario={usuario} />}
-      {pagina === 'retoDetalle' && <RetoDetallePage key={clave} id={datos.id} usuario={usuario} navegar={navegar} />}
-      {pagina === 'retoForm' && <RetoFormPage key={clave} id={datos.id} empresaId={datos.empresaId} usuario={usuario} navegar={navegar} />}
-      {pagina === 'empresas' && <EmpresasPage key={clave} navegar={navegar} />}
-      {pagina === 'usuarios' && <UsuariosPage key={clave} />}
-      {pagina === 'categorias' && <CategoriasPage key={clave} />}
-      {pagina === 'reportes' && usuario.rol === 'CESDE' && <ReportesPage key={clave} />}
+      <Routes key={clave}>
+        <Route path="/" element={<Navigate to="/inicio" replace />} />
+        <Route path="/inicio" element={<InicioPage usuario={usuario} navegar={navegar} />} />
+        <Route path="/retos" element={<RetosRuta usuario={usuario} navegar={navegar} />} />
+        <Route path="/retos/nuevo" element={<RetoFormRuta usuario={usuario} navegar={navegar} />} />
+        <Route path="/retos/:id" element={<RetoDetalleRuta usuario={usuario} navegar={navegar} />} />
+        <Route path="/retos/:id/editar" element={<RetoFormRuta usuario={usuario} navegar={navegar} />} />
+        <Route path="/empresas" element={<EmpresasPage navegar={navegar} />} />
+        <Route path="/usuarios" element={<UsuariosPage />} />
+        <Route path="/categorias" element={<CategoriasPage />} />
+        <Route
+          path="/reportes"
+          element={usuario.rol === 'CESDE' ? <ReportesPage /> : <Navigate to="/inicio" replace />}
+        />
+        {/* Cualquier dirección que no exista lleva al inicio */}
+        <Route path="*" element={<Navigate to="/inicio" replace />} />
+      </Routes>
     </AdminLayout>
   )
 }
